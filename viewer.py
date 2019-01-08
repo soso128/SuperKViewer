@@ -79,13 +79,15 @@ def convert_xyz(pos):
 
 def plot_positions(converted_pos, mesh, emax = 15, cmap = cm.viridis, iscolor = True):
     converted_pos = sorted(array(converted_pos), key = lambda x: x[0])
+    points = [None, None, None]
     for k, g in groupby(converted_pos, lambda x: x[0]):
         g = array(list(g))
         if k == 0 or k == 2:
             print(g[:, 2])
-        mesh[int(k) + 1].scatter(g[:, 1], g[:, 2], cmap = cmap, c = None if g.shape[1] < 3  or not iscolor else g[:, 3]/emax, vmin = 0, vmax = 1)
+        points[int(k)] = mesh[int(k) + 1].scatter(g[:, 1], g[:, 2], cmap = cmap, c = None if g.shape[1] < 3  or not iscolor else g[:, 3]/emax, vmin = 0, vmax = 1)
         mesh[int(k) + 1].grid(True)
     grid_redraw(mesh)
+    return points
 
 def read_pmt_file(filename):
     f = genfromtxt(filename, skip_header = 50, dtype = int)
@@ -116,3 +118,15 @@ def event_to_cables(event):
     nhits = event.TQREAL.nhits
     res = [[cables[i], charges[i], times[i]] for i in range(nhits)]
     return res
+
+def anim_time(converted_pos, mesh, time_bin, tmin = None, tmax = None, emax = 15, cmap = cm.viridis, iscolor = True):
+    bins = arange(tmin if tmin else converted_pos[:, -1].min(), tmax if tmax else converted_pos[:, -1].max(), time_bin)
+    bin_indices = digitize(converted_pos[:, -1], bins)
+    cv_times = [converted_pos[bin_indices == i + 1] for i in range(bin_indices.max())]
+    for cv in cv_times:
+        if cv is not None:
+            points = plot_positions(cv, mesh, emax = emax, cmap = cmap, iscolor = iscolor)
+            pause(0.05)
+            input("Press Enter to continue...")
+            for i in range(3): 
+                if points[i] is not None: points[i].remove()
