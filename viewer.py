@@ -83,14 +83,14 @@ def plot_positions(converted_pos, mesh, emax = 1000):
 
 def read_pmt_file(filename):
     f = genfromtxt(filename, skip_header = 50, dtype = int)
-    f = f[:, (1, 14, 16, 17, 18)]
+    f = f[:, (0, 14, 16, 17, 18)]
     return f
 
 def cables_to_positions(hits, cables):
     hits = array(hits)
-    cable_hits = array([cables[cables[:, 0] == c][0, 1:] for c in hits[:, 0]])
-    hits = hits[(cable_hits[:, 0] == 3) or (cable_hits[:, 0] == 4)]
-    cable_hits = cable_hits[(cable_hits[:, 0] == 3) or (cable_hits[:, 0] == 4)][:, 1:]
+    cable_hits = array([cables[cables[:, 0] == (int(c) & (2**16 - 1))][0, 1:] for c in hits[:, 0]])
+    hits = hits[(cable_hits[:, 0] == 3) | (cable_hits[:, 0] == 4)]
+    cable_hits = cable_hits[(cable_hits[:, 0] == 3) | (cable_hits[:, 0] == 4)][:, 1:]
     return column_stack((cable_hits[:, 0], cable_hits[:, 1], cable_hits[:, 2], hits[:, 1], hits[:, 2]))
 
 def get_root_tree(rootfile):
