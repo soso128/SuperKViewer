@@ -74,7 +74,7 @@ def convert_xyz(pos):
         raise ValueError("PMT outside the detector, z = {}...Maybe OD?".format(pos[2]))
     theta = arctan(pos[0]/pos[1]) if pos[1] != 0 else pi/2
     if pos[1] < 0 and theta > 0: theta -= pi
-    if pos[1] < 0 and theta < 0: theta += pi
+    elif pos[1] < 0 and theta < 0: theta += pi
     return (1, (theta + pi)/(2 * pi), (pos[2] - sk_id_zmin)/(sk_id_zmax - sk_id_zmin)) + tuple(pos[3:])
 
 def plot_positions(converted_pos, mesh, emax = 15, cmap = cm.viridis, iscolor = True):
