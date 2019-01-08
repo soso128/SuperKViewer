@@ -2,8 +2,6 @@ from numpy import *
 from matplotlib.pyplot import *
 import matplotlib.gridspec as gridspec
 from itertools import groupby
-import ROOT as r
-from glob import glob
 
 sk_id_zmax = 1810
 sk_id_zmin = -1810
@@ -96,6 +94,8 @@ def cables_to_positions(hits, cables):
     return column_stack((cable_hits[:, 0], cable_hits[:, 1], cable_hits[:, 2], hits[:, 1], hits[:, 2]))
 
 def get_root_tree(rootfile):
+    import ROOT as r
+    from glob import glob
     libs = glob("/home/elhedri/skofl/lib/*.so")
     for ll in libs:
         r.gSystem.Load(ll)
