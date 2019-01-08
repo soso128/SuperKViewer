@@ -5,7 +5,7 @@ from itertools import groupby
 
 sk_id_zmax = 1810
 sk_id_zmin = -1810
-sk_id_rad = 1691
+sk_id_rad = 1690
 
 def sk_mesh(rbin = 0.1, thetabin = pi/6, xbin = 0.1, ybin = 0.1):
     gs = gridspec.GridSpec(3, 1, height_ratios = [1, (sk_id_zmax - sk_id_zmin)/(2 * sk_id_rad), 1])
@@ -40,15 +40,19 @@ def grid_redraw(mesh, rbin = 0.1, thetabin = pi/6, xbin = 0.1, ybin = 0.1):
     ax1.set_yticklabels([])
     ax1.set_thetagrids(arange(0, 2 * pi, thetabin) * 180/pi)
     ax1.set_rgrids(arange(0, 1, rbin))
+    ax1.set_rmax(1)
     ax3.set_xticklabels([])
     ax3.set_yticklabels([])
     ax3.set_thetagrids(arange(0, 2 * pi, thetabin) * 180/pi)
     ax3.set_rgrids(arange(0, 1, rbin))
+    ax3.set_rmax(1)
     ax2.tick_params(width = 0)
     ax2.set_xticklabels([])
     ax2.set_yticklabels([])
     ax2.set_xticks(arange(0, 1, xbin))
     ax2.set_yticks(arange(0, 1, ybin))
+    ax2.set_xlim(0,1)
+    ax2.set_ylim(0,1)
     ax2.grid(True)
     return gcf(), ax1, ax2, ax3
 
@@ -73,11 +77,13 @@ def convert_xyz(pos):
     if pos[1] < 0 and theta < 0: theta += pi
     return (1, (theta + pi)/(2 * pi), (pos[2] - sk_id_zmin)/(sk_id_zmax - sk_id_zmin)) + tuple(pos[3:])
 
-def plot_positions(converted_pos, mesh, emax = 1000):
+def plot_positions(converted_pos, mesh, emax = 15, cmap = cm.viridis, iscolor = True):
     converted_pos = sorted(array(converted_pos), key = lambda x: x[0])
     for k, g in groupby(converted_pos, lambda x: x[0]):
         g = array(list(g))
-        mesh[int(k) + 1].scatter(g[:, 1], g[:, 2], cmap = cm.viridis, c = None if g.shape[1] < 3 else g[:, 3]/emax, vmin = 0, vmax = 1)
+        if k == 0 or k == 2:
+            print(g[:, 2])
+        mesh[int(k) + 1].scatter(g[:, 1], g[:, 2], cmap = cmap, c = None if g.shape[1] < 3  or not iscolor else g[:, 3]/emax, vmin = 0, vmax = 1)
         mesh[int(k) + 1].grid(True)
     grid_redraw(mesh)
 
