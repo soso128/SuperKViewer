@@ -1,6 +1,3 @@
-*.png
-*.dat
-*.txt
-*.log
+.*.swp
 *.pyc
 *.pyo
