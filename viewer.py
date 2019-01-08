@@ -82,7 +82,7 @@ def plot_positions(converted_pos, mesh, emax = 1000):
     grid_redraw(mesh)
 
 def read_pmt_file(filename):
-    f = genfromtxt(filename, skiprows = 50, dtype = int)
+    f = genfromtxt(filename, skip_header = 50, dtype = int)
     f = f[:, (1, 14, 16, 17, 18)]
     return f
 
