@@ -45,7 +45,7 @@ def sk_mesh(rbin = 0.1, thetabin = pi/6, xbin = 0.1, ybin = 0.1, Nhist = 0, wrat
     info = subplot(gs[0, 0])
     info.axis('off')
     info.text(0.5,0.5, 'SK run info')
-    return (gcf(), ax1, ax2, ax3, histo_time, info) + tuple(histos) if histos else None
+    return {'figure': gcf(), 'top': ax1, 'barrel': ax2, 'bottom': ax3, 'time_histo': histo_time, 'info': info, 'histos': histos}
 
 def grid_redraw(mesh, rbin = 0.1, thetabin = pi/6, xbin = 0.1, ybin = 0.1):
     ax1, ax2, ax3 = mesh[1], mesh[2], mesh[3]
@@ -70,4 +70,7 @@ def grid_redraw(mesh, rbin = 0.1, thetabin = pi/6, xbin = 0.1, ybin = 0.1):
     ax2.set_ylim(0,1)
     ax2.set_facecolor('black')
     ax2.grid(True)
-    return gcf(), ax1, ax2, ax3
+    mesh['top'] = ax1
+    mesh['barrel'] = ax2
+    mesh['bottom'] = ax3
+    return mesh
