@@ -42,13 +42,14 @@ def sk_mesh(rbin = 0.1, thetabin = pi/6, xbin = 0.1, ybin = 0.1, Nhist = 0, wrat
     ax2.set_aspect((sk_id_zmax - sk_id_zmin)/(2 * pi * sk_id_rad))
     ax2.set_facecolor('black')
     histo_time = subplot(gs[4, -1])
+    histo_charge = subplot(gs[4, 0])
     info = subplot(gs[0, 0])
     info.axis('off')
     info.text(0.5,0.5, 'SK run info')
-    return {'figure': gcf(), 'top': ax1, 'barrel': ax2, 'bottom': ax3, 'time_histo': histo_time, 'info': info, 'histos': histos}
+    return {'figure': gcf(), 'top': ax1, 'barrel': ax2, 'bottom': ax3, 'time_histo': histo_time, 'charge_histo': histo_charge, 'info': info, 'histos': histos}
 
 def grid_redraw(mesh, rbin = 0.1, thetabin = pi/6, xbin = 0.1, ybin = 0.1):
-    ax1, ax2, ax3 = mesh[1], mesh[2], mesh[3]
+    ax1, ax2, ax3 = mesh['top'], mesh['barrel'], mesh['bottom']
     ax1.set_xticklabels([])
     ax1.set_yticklabels([])
     ax1.set_thetagrids(arange(0, 2 * pi, thetabin) * 180/pi)
