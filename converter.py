@@ -1,17 +1,22 @@
 from numpy import *
 import pandas as pd
 
+c_water = 21.58
 
 def read_pmt_file(filename):
     f = genfromtxt(filename, skip_header = 50, dtype = int)
     f = f[:, (0, 14, 16, 17, 18)]
-    p = pd.DataFrame(f[:, 1], columns = ['cable', 'status', 'x', 'y', 'z'])
+    p = pd.DataFrame(f, columns = ['cable', 'status', 'x', 'y', 'z'])
     return p
 
 def cables_to_positions(hits, cables):
-    hits = array(hits)
-    positions = merge(hits, cables, on=['cable'])
+    positions = pd.merge(hits, cables, on=['cable'])
     positions = positions[positions['status'].isin([3,4])]
+    return positions
+
+def tof_subtract(positions, vertex):
+    positions['tof'] = sqrt(sum((positions[xyz] - vertex[i])**2 for i, xyz in enumerate(['x', 'y', 'z'])))/c_water
+    positions['tofsub'] = positions['time'] - positions['tof']
     return positions
 
 def convert_xyz(pos):
