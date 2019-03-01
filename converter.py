@@ -1,4 +1,5 @@
 from numpy import *
+from skgrid import sk_id_zmax, sk_id_zmin, sk_id_rad
 import pandas as pd
 
 c_water = 21.58
@@ -25,13 +26,13 @@ def convert_xyz(pos):
         r = sqrt(pos['x']**2 + pos['y']**2)
         theta = arccos(pos['x']/r)
         if pos['y'] < 0: theta = -theta
-        return (0, theta * 180/pi, r/sk_id_rad)
+        return (0, theta, r/sk_id_rad)
     # Bottom
     if pos['z'] == sk_id_zmin:
         r = sqrt(pos['x']**2 + pos['y']**2)
         theta = arccos(pos['x']/r)
         if pos['y'] < 0: theta = -theta
-        return (2, theta * 180/pi, r/sk_id_rad)
+        return (2, theta, r/sk_id_rad)
     # Barrel
     if pos['z'] < sk_id_zmin or pos['z'] > sk_id_zmax:
         raise ValueError("PMT outside the detector, z = {}...Maybe OD?".format(pos['z']))
@@ -45,6 +46,6 @@ def convert_positions_xyz(hits):
     hits[['index', 'x2d', 'y2d']] = converted_pos
     return hits
 
-def xmuon_to_xyz(xmu, entry, direction):
-    xyz = array(entry) + array(direction)/sqrt(sum(array(direction)**2)) * xmu
-    return {'x': xyz[0], 'y': xyz[1], 'z': xyz[2]}
+def xmuon_to_xyzt(xmu, entry, direction):
+    xyz = array(entry)[:3] + array(direction)/sqrt(sum(array(direction)**2)) * xmu
+    return {'x': xyz[0], 'y': xyz[1], 'z': xyz[2], 'time': entry[3] + xmu/21.5}
