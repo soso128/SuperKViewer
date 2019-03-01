@@ -20,21 +20,22 @@ def get_cct(event):
     charges = event.TQREAL.Q
     nhits = event.TQREAL.nhits
     res = pd.DataFrame(array([array([cables[i] & (2**16 - 1), charges[i], times[i]]) for i in range(nhits)]), columns = ['cable', 'charge', 'time'])
+    res.astype({'cable': 'int64'}, copy = False)
     return res
 
 def get_mu_info(event):
     mu = event.MU
     muon = Muon()
     muon.muboy_status = mu.muboy_status
-    muon.muboy_ntrack = mu.muboy_ntrack
-    for i in range(muon.muboy_ntrack):
+    muon.muboy_ntracks = mu.muboy_ntrack
+    muon.muboy_dir = [mu.muboy_dir[j] for j in range(3)]
+    muon.muboy_goodness = mu.muboy_goodness
+    muon.muboy_length = mu.muboy_length
+    muon.muboy_dedx = [mu.muboy_dedx[j] for j in range(int(muon.muboy_length/50) + 1)]
+    for i in range(muon.muboy_ntracks):
         t = Track()
-        t.muboy_entpos = [mu.muboy_entpos[i][j] for j in range(4)]
+        t.muboy_entpos = [mu.muboy_entpos[i * 4 + j] for j in range(4)]
         t.muboy_entpos[3] /= 21.58333
-        t.muboy_dir = [mu.muboy_dir[i][j] for j in range(3)]
-        t.muboy_goodness = mu.muboy_goodness[i]
-        t.muboy_length = mu.muboy_length[i]
-        t.muboy_dedx = [mu.muboy_dedx[i][j] for j in range(200)]
         muon.tracks.append(t)
     return muon
 
